@@ -138,6 +138,53 @@ header p {
     font-weight: bold;
 }
 
+.vendor-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+}
+
+.vendor-section h3 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+    font-size: 1.3rem;
+}
+
+.vendor-select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+
+.vendor-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.vendor-info {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.vendor-info p {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.vendor-info strong {
+    color: #2c3e50;
+}
+
 .payment-section {
     display: flex;
     flex-direction: column;
