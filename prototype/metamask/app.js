@@ -3,13 +3,34 @@ class CryptoPayment {
         this.web3 = null;
         this.userAccount = null;
         this.productPrice = 9.99;
-        this.merchantAddress = '0x742d35Cc6464C4532d9E46C0c5a4E6C30D60E8EE';
+        this.selectedVendor = null;
+        this.vendors = [
+            {
+                id: 'vendor1',
+                name: 'Post-it Store',
+                address: '0x742d35Cc6464C4532d9E46C0c5a4E6C30D60E8EE',
+                description: 'Premium office supplies'
+            },
+            {
+                id: 'vendor2', 
+                name: 'Tech Gadgets Co',
+                address: '0x1234567890123456789012345678901234567890',
+                description: 'Latest tech accessories'
+            },
+            {
+                id: 'vendor3',
+                name: 'Books & More',
+                address: '0x9876543210987654321098765432109876543210',
+                description: 'Educational materials'
+            }
+        ];
         
         this.init();
     }
 
     async init() {
         this.setupEventListeners();
+        this.populateVendorSelect();
         await this.updateCryptoPrices();
         setInterval(() => this.updateCryptoPrices(), 60000);
         
@@ -39,6 +60,29 @@ class CryptoPayment {
         document.getElementById('connect-wallet').addEventListener('click', () => this.connectWallet());
         document.getElementById('pay-eth').addEventListener('click', () => this.payWithCrypto('ETH'));
         document.getElementById('pay-lisk').addEventListener('click', () => this.payWithCrypto('LISK'));
+        document.getElementById('vendor-select').addEventListener('change', (e) => this.selectVendor(e.target.value));
+    }
+
+    populateVendorSelect() {
+        const select = document.getElementById('vendor-select');
+        this.vendors.forEach(vendor => {
+            const option = document.createElement('option');
+            option.value = vendor.id;
+            option.textContent = `${vendor.name} - ${vendor.description}`;
+            select.appendChild(option);
+        });
+        this.selectVendor(this.vendors[0].id);
+    }
+
+    selectVendor(vendorId) {
+        this.selectedVendor = this.vendors.find(v => v.id === vendorId);
+        const vendorInfo = document.getElementById('vendor-info');
+        if (this.selectedVendor) {
+            vendorInfo.innerHTML = `
+                <p><strong>Vendor:</strong> ${this.selectedVendor.name}</p>
+                <p><strong>Address:</strong> ${this.selectedVendor.address.substring(0, 6)}...${this.selectedVendor.address.substring(38)}</p>
+            `;
+        }
     }
 
     async connectWallet() {
@@ -122,6 +166,11 @@ class CryptoPayment {
             return;
         }
 
+        if (!this.selectedVendor) {
+            alert('Please select a vendor first.');
+            return;
+        }
+
         try {
             this.showLoadingOverlay();
             
@@ -131,7 +180,7 @@ class CryptoPayment {
                 const ethAmount = await this.getETHAmount();
                 transactionParams = {
                     from: this.userAccount,
-                    to: this.merchantAddress,
+                    to: this.selectedVendor.address,
                     value: this.web3.utils.toWei(ethAmount.toString(), 'ether'),
                     gas: '21000',
                 };
@@ -140,7 +189,7 @@ class CryptoPayment {
                 const liskAmount = await this.getLISKAmount();
                 transactionParams = {
                     from: this.userAccount,
-                    to: this.merchantAddress,
+                    to: this.selectedVendor.address,
                     value: this.web3.utils.toWei(liskAmount.toString(), 'ether'),
                     gas: '21000',
                 };
@@ -152,7 +201,7 @@ class CryptoPayment {
             });
 
             this.hideLoadingOverlay();
-            this.showSuccessMessage(txHash, cryptoType);
+            this.showSuccessMessage(txHash, cryptoType, this.selectedVendor.name);
             
         } catch (error) {
             this.hideLoadingOverlay();
@@ -228,17 +277,17 @@ class CryptoPayment {
         document.getElementById('loading-overlay').classList.add('hidden');
     }
 
-    showSuccessMessage(txHash, cryptoType) {
+    showSuccessMessage(txHash, cryptoType, vendorName) {
         const message = `
             <div style="background: white; padding: 30px; border-radius: 15px; text-align: center; max-width: 400px; color: #333;">
                 <div style="font-size: 3rem; color: #28a745; margin-bottom: 20px;">✅</div>
                 <h2 style="color: #28a745; margin-bottom: 15px;">Payment Successful!</h2>
-                <p style="margin-bottom: 20px;">Your payment has been processed successfully.</p>
+                <p style="margin-bottom: 20px;">Your payment to <strong>${vendorName}</strong> has been processed successfully.</p>
                 <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
                     <p style="font-weight: bold; margin-bottom: 10px;">Transaction Hash:</p>
                     <p style="font-family: monospace; font-size: 12px; word-break: break-all; color: #667eea;">${txHash}</p>
                 </div>
-                <p style="color: #666; margin-bottom: 20px;">Paid with ${cryptoType}</p>
+                <p style="color: #666; margin-bottom: 20px;">Paid with ${cryptoType} to ${vendorName}</p>
                 <button onclick="location.reload()" style="background: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: bold;">Continue Shopping</button>
             </div>
         `;
