@@ -13,21 +13,15 @@ class CryptoPayment {
             },
             {
                 id: 'vendor2', 
-                name: 'My Store',
-                address: 'YOUR_WALLET_ADDRESS_HERE',
-                description: 'My awesome products'
+                name: 'Tech Gadgets Co',
+                address: '0x1234567890123456789012345678901234567890',
+                description: 'Latest tech accessories'
             },
             {
                 id: 'vendor3',
                 name: 'Books & More',
                 address: '0x9876543210987654321098765432109876543210',
                 description: 'Educational materials'
-            },
-            {
-                id: 'vendor4',
-                name: 'Your Store Name',
-                address: 'YOUR_WALLET_ADDRESS_HERE',
-                description: 'Your store description'
             }
         ];
         
