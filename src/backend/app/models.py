@@ -35,7 +35,7 @@ class Payment(Base):
     customer_wallet = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    metadata = Column(JSON, nullable=True)  # Additional payment metadata
+    payment_metadata = Column(JSON, nullable=True)  # Additional payment metadata
     
     # Relationship with merchant
     merchant = relationship("Merchant", back_populates="payments")
