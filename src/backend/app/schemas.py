@@ -6,7 +6,7 @@ from datetime import datetime
 class MerchantBase(BaseModel):
     company_name: str
     company_address: Optional[str] = None
-    wallet_address: constr(regex=r'^0x[a-fA-F0-9]{40}$')
+    wallet_address: constr(pattern=r'^0x[a-fA-F0-9]{40}$')
     company_logo: Optional[HttpUrl] = None
     store_description: Optional[str] = None
     contact_email: EmailStr
@@ -32,8 +32,8 @@ class Merchant(MerchantBase):
 class PaymentBase(BaseModel):
     amount: float
     currency: str
-    customer_wallet: constr(regex=r'^0x[a-fA-F0-9]{40}$')
-    metadata: Optional[dict] = None
+    customer_wallet: constr(pattern=r'^0x[a-fA-F0-9]{40}$')
+    payment_metadata: Optional[dict] = None
 
 class PaymentCreate(PaymentBase):
     merchant_id: str
