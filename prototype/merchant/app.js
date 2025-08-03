@@ -5,16 +5,36 @@ class MerchantSetup {
         this.previewContent = document.getElementById('preview-content');
         this.successModal = document.getElementById('success-modal');
         this.logoPreview = document.getElementById('logo-preview');
+        this.loginScreen = document.getElementById('login-screen');
+        this.merchantSetup = document.getElementById('merchant-setup');
+        this.userEmail = document.getElementById('user-email');
+        this.currentUser = null;
         
         this.init();
     }
 
     init() {
+        this.checkAuthState();
         this.setupEventListeners();
         this.loadSavedConfiguration();
     }
 
     setupEventListeners() {
+        // Login buttons
+        const loginButtons = document.querySelectorAll('.login-btn');
+        loginButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => this.handleLogin(e));
+        });
+
+        // Logout button
+        document.getElementById('logout-btn').addEventListener('click', () => this.handleLogout());
+
+        // Learn more link
+        document.getElementById('learn-more').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.showLearnMore();
+        });
+
         // Form submission
         this.form.addEventListener('submit', (e) => this.handleSubmit(e));
         
@@ -42,6 +62,183 @@ class MerchantSetup {
         inputs.forEach(input => {
             input.addEventListener('blur', () => this.validateField(input));
         });
+    }
+
+    checkAuthState() {
+        const savedUser = localStorage.getItem('bytepay-merchant-user');
+        if (savedUser) {
+            try {
+                this.currentUser = JSON.parse(savedUser);
+                this.showMerchantSetup();
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                this.showLoginScreen();
+            }
+        } else {
+            this.showLoginScreen();
+        }
+    }
+
+    handleLogin(e) {
+        const provider = e.currentTarget.dataset.provider;
+        this.authenticateWithProvider(provider);
+    }
+
+    authenticateWithProvider(provider) {
+        // Simulate OAuth flow
+        const providerEmails = {
+            gmail: '@gmail.com',
+            yahoo: '@yahoo.com',
+            outlook: '@outlook.com',
+            email: '@example.com'
+        };
+
+        // In a real app, this would trigger OAuth flow
+        const email = `merchant${Math.floor(Math.random() * 1000)}${providerEmails[provider]}`;
+        
+        this.currentUser = {
+            email: email,
+            provider: provider,
+            loginTime: new Date().toISOString()
+        };
+
+        // Save user session
+        localStorage.setItem('bytepay-merchant-user', JSON.stringify(this.currentUser));
+        
+        // Show success animation
+        this.showLoginSuccess(email, provider);
+    }
+
+    showLoginSuccess(email, provider) {
+        const loginCard = document.querySelector('.login-card');
+        loginCard.innerHTML = `
+            <div class="login-success">
+                <div class="success-animation">✅</div>
+                <h2>Welcome to BytePay!</h2>
+                <p>Successfully signed in with ${this.formatProviderName(provider)}</p>
+                <p class="user-email-display">${email}</p>
+                <div class="loading-bar">
+                    <div class="loading-progress"></div>
+                </div>
+                <p class="loading-text">Setting up your merchant dashboard...</p>
+            </div>
+        `;
+
+        // Add success styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .login-success {
+                text-align: center;
+                padding: 20px 0;
+            }
+            .success-animation {
+                font-size: 4rem;
+                margin-bottom: 20px;
+                animation: bounceIn 0.6s ease;
+            }
+            .user-email-display {
+                background: #f8f9fa;
+                padding: 10px 15px;
+                border-radius: 8px;
+                font-family: monospace;
+                color: #667eea;
+                margin: 15px 0;
+            }
+            .loading-bar {
+                width: 100%;
+                height: 4px;
+                background: #e9ecef;
+                border-radius: 2px;
+                margin: 20px 0 10px 0;
+                overflow: hidden;
+            }
+            .loading-progress {
+                height: 100%;
+                background: linear-gradient(45deg, #667eea, #764ba2);
+                width: 0%;
+                border-radius: 2px;
+                animation: loadingProgress 2s ease-in-out forwards;
+            }
+            .loading-text {
+                color: #6c757d;
+                font-size: 0.9rem;
+                margin-top: 10px;
+            }
+            @keyframes bounceIn {
+                0% { transform: scale(0.3); opacity: 0; }
+                50% { transform: scale(1.05); }
+                70% { transform: scale(0.9); }
+                100% { transform: scale(1); opacity: 1; }
+            }
+            @keyframes loadingProgress {
+                0% { width: 0%; }
+                100% { width: 100%; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Transition to merchant setup after animation
+        setTimeout(() => {
+            this.showMerchantSetup();
+        }, 2500);
+    }
+
+    formatProviderName(provider) {
+        const names = {
+            gmail: 'Gmail',
+            yahoo: 'Yahoo',
+            outlook: 'Outlook',
+            email: 'Email'
+        };
+        return names[provider] || provider;
+    }
+
+    showLoginScreen() {
+        this.loginScreen.classList.remove('hidden');
+        this.merchantSetup.classList.add('hidden');
+    }
+
+    showMerchantSetup() {
+        this.loginScreen.classList.add('hidden');
+        this.merchantSetup.classList.remove('hidden');
+        
+        if (this.currentUser) {
+            this.userEmail.textContent = this.currentUser.email;
+        }
+    }
+
+    handleLogout() {
+        if (confirm('Are you sure you want to log out?')) {
+            localStorage.removeItem('bytepay-merchant-user');
+            this.currentUser = null;
+            this.showLoginScreen();
+        }
+    }
+
+    showLearnMore() {
+        alert(`BytePay - Secure Crypto Payment Solutions
+
+🔐 Secure & Reliable
+• Enterprise-grade security for all transactions
+• Multi-signature wallet support
+• Real-time fraud detection
+
+💰 Multiple Cryptocurrencies
+• Accept USDT, ETH, LISK and more
+• Automatic conversion to your preferred currency
+• Low transaction fees
+
+📊 Comprehensive Dashboard
+• Real-time transaction monitoring
+• Detailed analytics and reporting
+• Customer management tools
+
+🚀 Easy Integration
+• Simple API integration
+• Pre-built payment widgets
+• 24/7 developer support
+
+Get started today and join thousands of merchants already using BytePay!`);
     }
 
     handleSubmit(e) {
