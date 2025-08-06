@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BytePay - Post-it Notes Store</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>BytePay Store</h1>
+            <p>Premium Post-it Notes with Crypto Payments</p>
+        </header>
+
+        <main>
+            <div class="product-card">
+                <div class="product-image">
+                    <div class="postit-preview">
+                        <div class="postit yellow">
+                            <p>Sample Note</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-info">
+                    <h2>Premium Post-it Notes Pack</h2>
+                    <p class="description">High-quality sticky notes perfect for reminders, brainstorming, and organization. Pack of 100 notes in vibrant yellow.</p>
+                    
+                    <div class="price-section">
+                        <div class="price">$9.99 USD</div>
+                        <div class="crypto-prices">
+                            <div class="crypto-price" data-crypto="ETH">
+                                <span class="crypto-symbol">ETH:</span>
+                                <span class="crypto-amount" id="eth-price">Loading...</span>
+                            </div>
+                            <div class="crypto-price" data-crypto="LISK">
+                                <span class="crypto-symbol">LSK:</span>
+                                <span class="crypto-amount" id="lisk-price">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="vendor-section">
+                        <h3>Select Vendor</h3>
+                        <select id="vendor-select" class="vendor-select">
+                        </select>
+                        <div id="vendor-info" class="vendor-info">
+                        </div>
+                    </div>
+
+                    <div class="payment-section">
+                        <button id="connect-wallet" class="btn-primary">Connect Wallet</button>
+                        <div id="wallet-info" class="wallet-info hidden">
+                            <p>Connected: <span id="wallet-address"></span></p>
+                            <div class="payment-options">
+                                <button id="pay-eth" class="btn-crypto eth-btn">Pay with ETH</button>
+                                <button id="pay-lisk" class="btn-crypto lisk-btn">Pay with LISK</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 BytePay Store - Secure Crypto Payments</p>
+        </footer>
+    </div>
+
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="loading-spinner"></div>
+        <p>Processing payment...</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
